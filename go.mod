@@ -1,4 +1,4 @@
-module github.com/konapun/quirkle
+module github.com/konapun/qwirkle
 
 go 1.24.0
 

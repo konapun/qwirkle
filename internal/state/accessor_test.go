@@ -1,25 +1,42 @@
 package state_test
 
 import (
+	"errors"
 	"testing"
 
-	. "github.com/konapun/quirkle/internal/state"
+	. "github.com/konapun/qwirkle/internal/state"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAccessor_Observers(t *testing.T) {
-	accessor := NewAccessor(&TestModel{"test"})
+	testModel := NewTestModel("test")
+	testModel.String = "initial"
+	accessor := NewAccessor(testModel)
 
-  called := false
-	observer1 := NewRuntimeObserver(func(new Model, old Model) {
-    called = true
-  })
+	called := false
+	var newModel, oldModel *TestModel
+	observer1 := NewRuntimeObserver(func(new *TestModel, old *TestModel) {
+		called = true
+		newModel = new
+		oldModel = old
+	})
 
 	accessor.RegisterObserver(observer1)
-  require.False(t, called)
+	require.False(t, called)
 
-  accessor.Update(func(m TestModel) error {
-    return nil
-  })
-  require.True(t, called)
+	accessor.Update(func(m *TestModel) error {
+		m.String = "updated"
+		return nil
+	})
+	require.True(t, called)
+	require.Equal(t, "initial", oldModel.String)
+	require.Equal(t, "updated", newModel.String)
+
+	// Test updating the model with an error
+	called = false
+	err := accessor.Update(func(m *TestModel) error {
+		return errors.New("error")
+	})
+	require.Error(t, err)
+	require.False(t, called)
 }

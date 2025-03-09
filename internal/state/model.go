@@ -4,8 +4,8 @@ type Diff struct {
 	// Define the methods for the Diff type
 }
 
-// TODO: generic type for diff
-type Model interface {
+type Model[T any] interface {
 	Key() string
-	Diff(other Model) Diff
+	Diff(other T) Diff
+	Clone() T
 }

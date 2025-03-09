@@ -3,12 +3,12 @@ package state_test
 import (
 	"testing"
 
-	. "github.com/konapun/quirkle/internal/state"
+	. "github.com/konapun/qwirkle/internal/state"
 	"github.com/stretchr/testify/require"
 )
 
 func TestManager_AccessorFor(t *testing.T) {
-	state := NewState(&TestModel{"test"})
+	state := NewState(NewTestModel("test"))
 	manager := NewManager(state)
 
 	// Test trying to get an accessor for a bad key which is not in the state
