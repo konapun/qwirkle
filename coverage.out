@@ -1,0 +1,24 @@
+mode: set
+github.com/konapun/quirkle/main.go:3.14,5.2 0 0
+github.com/konapun/quirkle/internal/state/accessor.go:9.41,14.2 1 1
+github.com/konapun/quirkle/internal/state/accessor.go:16.56,18.2 1 1
+github.com/konapun/quirkle/internal/state/accessor.go:21.34,24.2 1 0
+github.com/konapun/quirkle/internal/state/accessor.go:26.61,28.42 2 0
+github.com/konapun/quirkle/internal/state/accessor.go:28.42,30.3 1 0
+github.com/konapun/quirkle/internal/state/accessor.go:31.2,34.12 3 0
+github.com/konapun/quirkle/internal/state/accessor.go:37.52,38.39 1 0
+github.com/konapun/quirkle/internal/state/accessor.go:38.39,40.3 1 0
+github.com/konapun/quirkle/internal/state/manager.go:8.40,13.2 1 1
+github.com/konapun/quirkle/internal/state/manager.go:15.66,17.46 1 1
+github.com/konapun/quirkle/internal/state/manager.go:17.46,19.3 1 1
+github.com/konapun/quirkle/internal/state/manager.go:22.2,23.16 2 1
+github.com/konapun/quirkle/internal/state/manager.go:23.16,25.3 1 1
+github.com/konapun/quirkle/internal/state/manager.go:26.2,28.22 3 1
+github.com/konapun/quirkle/internal/state/observer.go:11.69,15.2 1 1
+github.com/konapun/quirkle/internal/state/observer.go:17.56,19.2 1 0
+github.com/konapun/quirkle/internal/state/state.go:7.38,9.29 2 1
+github.com/konapun/quirkle/internal/state/state.go:9.29,11.3 1 1
+github.com/konapun/quirkle/internal/state/state.go:12.2,14.3 1 1
+github.com/konapun/quirkle/internal/state/state.go:17.48,18.34 1 1
+github.com/konapun/quirkle/internal/state/state.go:18.34,20.3 1 1
+github.com/konapun/quirkle/internal/state/state.go:21.2,21.34 1 1
