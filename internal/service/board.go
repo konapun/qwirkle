@@ -8,7 +8,6 @@ import (
 )
 
 var (
-	ErrOutOfBounds  = errors.New("out of bounds")
 	ErrIllegalMove  = errors.New("illegal move")
 	ErrCellOccupied = errors.New("cell occupied")
 )
@@ -28,10 +27,8 @@ func (b *BoardService) PlaceTile(tile *qs.Tile, x, y int) (int, error) {
 		err   error
 	)
 	err = b.accessor.Update(func(b *qs.Board) error {
-		if x < 0 || y < 0 || x >= len(b.Tiles) || y >= len(b.Tiles[x]) {
-			return ErrOutOfBounds
-		}
-		if b.Tiles[x][y] != nil {
+		// Check if the position is already occupied
+		if _, exists := b.Tiles[[2]int{x, y}]; exists {
 			return ErrCellOccupied
 		}
 
@@ -39,7 +36,10 @@ func (b *BoardService) PlaceTile(tile *qs.Tile, x, y int) (int, error) {
 		// lineVertical := b.GetLine(x, y, qs.DirectionVertical)
 		// lineHorizontal := b.GetLine(x, y, qs.DirectionHorizontal)
 
-		// b.Tiles[x][y] = tile
+		// TODO: Implement game logic for placing a tile
+
+		// Place the tile
+		b.Tiles[[2]int{x, y}] = tile
 		return nil
 	})
 	if err != nil {

@@ -52,8 +52,14 @@ func (l Line) Type() Type {
 }
 
 type Board struct {
-	// the tiles on the board
-	Tiles [][]*Tile
+	Tiles map[[2]int]*Tile
+}
+
+// NewBoard creates a new board with an empty map of tiles
+func NewBoard() *Board {
+	return &Board{
+		Tiles: make(map[[2]int]*Tile),
+	}
 }
 
 // GetLine returns a line of tiles starting at the given position in the given direction until it encounters an empty space
@@ -61,8 +67,8 @@ func (b *Board) GetLine(x, y int, direction Direction) Line {
 	line := make([]*Tile, 0)
 	collectCells := func(x, y int, dx, dy int) {
 		for {
-			tile := b.Tiles[x][y]
-			if tile == nil {
+			tile, exists := b.Tiles[[2]int{x, y}]
+			if !exists {
 				break
 			}
 			line = append(line, tile)
@@ -103,7 +109,11 @@ func (b *Board) Diff(other *Board) Diff {
 }
 
 func (b *Board) Clone() *Board {
+	newTiles := make(map[[2]int]*Tile)
+	for k, v := range b.Tiles {
+		newTiles[k] = v
+	}
 	return &Board{
-		Tiles: b.Tiles,
+		Tiles: newTiles,
 	}
 }

@@ -8,38 +8,44 @@ import (
 )
 
 func TestBoard_GetLine(t *testing.T) {
-	board := Board{
-		Tiles: [][]*Tile{
-			{{Color: ColorRed, Shape: ShapeCircle}},
-			{{Color: ColorRed, Shape: ShapeSquare}},
-			{{Color: ColorRed, Shape: ShapeClover}},
-			{{Color: ColorRed, Shape: ShapeDiamond}},
-			{{Color: ColorRed, Shape: ShapeFourPointStar}},
-			{{Color: ColorRed, Shape: ShapeEightPointStar}},
-		},
-	}
+	board := NewBoard()
+	board.Tiles[[2]int{0, 0}] = &Tile{Color: ColorRed, Shape: ShapeCircle}
+	board.Tiles[[2]int{1, 0}] = &Tile{Color: ColorRed, Shape: ShapeSquare}
+	board.Tiles[[2]int{2, 0}] = &Tile{Color: ColorRed, Shape: ShapeClover}
+	board.Tiles[[2]int{3, 0}] = &Tile{Color: ColorRed, Shape: ShapeDiamond}
+	board.Tiles[[2]int{4, 0}] = &Tile{Color: ColorRed, Shape: ShapeFourPointStar}
+	board.Tiles[[2]int{5, 0}] = &Tile{Color: ColorRed, Shape: ShapeEightPointStar}
+	board.Tiles[[2]int{0, 1}] = &Tile{Color: ColorRed, Shape: ShapeSquare}
+	board.Tiles[[2]int{0, 2}] = &Tile{Color: ColorRed, Shape: ShapeClover}
 
+	// Test getting a horizontal line
 	line := board.GetLine(0, 0, DirectionHorizontal)
-	require.Equal(t, 2, line.Length())
+	require.Equal(t, 6, line.Length())
+
+	// Test getting a vertical line
+	line = board.GetLine(0, 0, DirectionVertical)
+	require.Equal(t, 3, line.Length())
 }
 
 func TestBoard_Key(t *testing.T) {
-	board := Board{}
+	board := NewBoard()
 	require.Equal(t, "board", board.Key())
 }
 
 func TestBoard_Diff(t *testing.T) {
-	board := Board{Tiles: [][]*Tile{{}, {}}}
-	other := Board{Tiles: [][]*Tile{{}, {}, {}}}
-	diff := board.Diff(&other)
+	board := NewBoard()
+	board.Tiles[[2]int{0, 0}] = &Tile{Color: ColorRed, Shape: ShapeCircle}
+	other := NewBoard()
+	other.Tiles[[2]int{0, 0}] = &Tile{Color: ColorRed, Shape: ShapeCircle}
+	other.Tiles[[2]int{1, 0}] = &Tile{Color: ColorBlue, Shape: ShapeCircle}
+	diff := board.Diff(other)
 	require.True(t, diff.HasChanged("Tiles"))
 }
 
 func TestBoard_Clone(t *testing.T) {
-	board := Board{Tiles: [][]*Tile{
-		{{Color: ColorRed, Shape: ShapeCircle}},
-		{{Color: ColorBlue, Shape: ShapeCircle}},
-	}}
+	board := NewBoard()
+	board.Tiles[[2]int{0, 0}] = &Tile{Color: ColorRed, Shape: ShapeCircle}
+	board.Tiles[[2]int{1, 0}] = &Tile{Color: ColorBlue, Shape: ShapeCircle}
 	clone := board.Clone()
 	require.Equal(t, board.Tiles, clone.Tiles)
 }
