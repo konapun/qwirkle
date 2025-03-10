@@ -16,7 +16,7 @@ func (p *Player) Key() string {
 }
 
 func (p *Player) Diff(other *Player) Diff {
-	diff := Diff{}
+	diff := NewDiff()
 	if p.IsActive != other.IsActive {
 		diff.SetChanged("IsActive", other.IsActive, p.IsActive)
 	}

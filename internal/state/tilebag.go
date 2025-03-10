@@ -14,12 +14,12 @@ const (
 )
 
 const (
-	Red Color = iota
-	Orange
-	Yellow
-	Green
-	Blue
-	Purple
+	ColorRed Color = iota
+	ColorOrange
+	ColorYellow
+	ColorGreen
+	ColorBlue
+	ColorPurple
 )
 
 type Shape int
@@ -31,6 +31,10 @@ type Tile struct {
 	Color Color
 }
 
+func (t *Tile) Equals(other *Tile) bool {
+	return t.Shape == other.Shape && t.Color == other.Color
+}
+
 type TileBag struct {
 	Tiles []Tile
 }
@@ -39,8 +43,13 @@ func (t *TileBag) Key() string {
 	return TileBagKey
 }
 
-func (t *TileBag) Diff(other *Tile) Diff {
-	return Diff{}
+func (t *TileBag) Diff(other *TileBag) Diff {
+	diff := NewDiff()
+	if len(t.Tiles) != len(other.Tiles) {
+		diff.SetChanged("Tiles", other.Tiles, t.Tiles)
+	}
+
+	return diff
 }
 
 func (t *TileBag) Clone() *TileBag {

@@ -49,9 +49,6 @@ func (t *TileBagService) DrawTile() (*qs.Tile, error) {
 func (t *TileBagService) ExchangeTiles(tiles []qs.Tile) ([]qs.Tile, error) {
 	var newTiles []qs.Tile
 	if err := t.accessor.Update(func(b *qs.TileBag) error {
-		// Add the old tiles back to the bag
-		b.Tiles = append(b.Tiles, tiles...)
-
 		// Draw new tiles from the bag
 		for range tiles {
 			if len(b.Tiles) == 0 {
@@ -61,6 +58,10 @@ func (t *TileBagService) ExchangeTiles(tiles []qs.Tile) ([]qs.Tile, error) {
 			b.Tiles = b.Tiles[:len(b.Tiles)-1]
 			newTiles = append(newTiles, newTile)
 		}
+
+		// Add the old tiles back to the bag
+		b.Tiles = append(b.Tiles, tiles...)
+
 		return nil
 	}); err != nil {
 		return nil, err
