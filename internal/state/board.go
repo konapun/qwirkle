@@ -1,5 +1,7 @@
 package state
 
+import "sort"
+
 const (
 	BoardKey = "board"
 )
@@ -22,15 +24,20 @@ type Direction int
 
 type Type int
 
-type Line []*Tile
+type Line []*Cell
+
+type Cell struct {
+	X, Y int
+	Tile *Tile
+}
 
 func (l Line) Length() int {
 	return len(l)
 }
 
 func (l Line) Contains(tile *Tile) bool {
-	for _, t := range l {
-		if t.Equals(tile) {
+	for _, cell := range l {
+		if cell.Tile.Equals(tile) {
 			return true
 		}
 	}
@@ -41,14 +48,78 @@ func (l Line) Type() Type {
 	if l.Length() < 2 {
 		return TypeUndetermined
 	}
-	if l[0].Color == l[1].Color {
+	if l[0].Tile.Color == l[1].Tile.Color {
 		return TypeColorMatch
 	}
-	if l[0].Shape == l[1].Shape {
+	if l[0].Tile.Shape == l[1].Tile.Shape {
 		return TypeShapeMatch
 	}
 	// Shouldn't happen
 	return TypeUndetermined
+}
+
+func (l Line) IsValid() bool {
+	switch l.Type() {
+	case TypeUndetermined:
+		return l.Length() == 1
+	case TypeColorMatch:
+		shapes := make(map[Shape]bool)
+		for _, cell := range l {
+			if shapes[cell.Tile.Shape] {
+				return false
+			}
+			shapes[cell.Tile.Shape] = true
+		}
+		return true
+	case TypeShapeMatch:
+		colors := make(map[Color]bool)
+		for _, cell := range l {
+			if colors[cell.Tile.Color] {
+				return false
+			}
+			colors[cell.Tile.Color] = true
+		}
+		return true
+	}
+	return false
+}
+
+func (l Line) GetTiles() []*Tile {
+	tiles := make([]*Tile, 0)
+	for _, cell := range l {
+		tiles = append(tiles, cell.Tile)
+	}
+	return tiles
+}
+
+func (l Line) GetShapes() []Shape {
+	shapes := make([]Shape, 0)
+	for _, cell := range l {
+		shapes = append(shapes, cell.Tile.Shape)
+	}
+	return shapes
+}
+
+func (l Line) GetColors() []Color {
+	colors := make([]Color, 0)
+	for _, cell := range l {
+		colors = append(colors, cell.Tile.Color)
+	}
+	return colors
+}
+
+// Sort sorts the line by Y, then X to ensure proper ordering while reading line contents
+func (l Line) Sort() Line {
+	sortedLine := make(Line, len(l))
+	copy(sortedLine, l)
+
+	sort.Slice(sortedLine, func(i, j int) bool {
+		if sortedLine[i].Y == sortedLine[j].Y {
+			return sortedLine[i].X < sortedLine[j].X
+		}
+		return sortedLine[i].Y < sortedLine[j].Y
+	})
+	return sortedLine
 }
 
 type Board struct {
@@ -64,14 +135,15 @@ func NewBoard() *Board {
 
 // GetLine returns a line of tiles starting at the given position in the given direction until it encounters an empty space
 func (b *Board) GetLine(x, y int, direction Direction) Line {
-	line := make([]*Tile, 0)
+	cells := make([]*Cell, 0)
+	line := Line(cells)
 	collectCells := func(x, y int, dx, dy int) {
 		for {
 			tile, exists := b.Tiles[[2]int{x, y}]
 			if !exists {
 				break
 			}
-			line = append(line, tile)
+			line = append(line, &Cell{X: x, Y: y, Tile: tile})
 			x += dx
 			y += dy
 		}
@@ -93,7 +165,7 @@ func (b *Board) GetLine(x, y int, direction Direction) Line {
 		collectCells(x-1, y, -1, 0)
 	}
 
-	return line
+	return line.Sort()
 }
 
 func (b *Board) Key() string {
