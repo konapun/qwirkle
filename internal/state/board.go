@@ -1,6 +1,9 @@
 package state
 
-import "sort"
+import (
+	"errors"
+	"sort"
+)
 
 const (
 	BoardKey = "board"
@@ -18,6 +21,10 @@ const (
 	TypeShapeMatch
 	// TypeUndetermined is a line which does not have enough tiles to determine its type
 	TypeUndetermined
+)
+
+var (
+	ErrCellOccupied = errors.New("cell occupied")
 )
 
 type Direction int
@@ -166,6 +173,17 @@ func (b *Board) GetLine(x, y int, direction Direction) Line {
 	}
 
 	return line.Sort()
+}
+
+// Test returns the lines that would be formed by placing a tile at the given position
+func (b *Board) Test(tile *Tile, x, y int) (Line, Line, error) {
+	if _, exists := b.Tiles[[2]int{x, y}]; exists {
+		return nil, nil, ErrCellOccupied
+	}
+
+	horizontal := b.GetLine(x, y, DirectionHorizontal)
+	vertical := b.GetLine(x, y, DirectionVertical)
+	return append(horizontal, &Cell{X: x, Y: y, Tile: tile}), append(vertical, &Cell{X: x, Y: y, Tile: tile}), nil
 }
 
 func (b *Board) Key() string {

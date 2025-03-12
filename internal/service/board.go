@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	ErrIllegalMove  = errors.New("illegal move")
-	ErrCellOccupied = errors.New("cell occupied")
+	ErrIllegalMove = errors.New("illegal move")
 )
 
 type BoardService struct {
@@ -26,20 +25,29 @@ func (b *BoardService) PlaceTile(tile *qs.Tile, x, y int) (int, error) {
 		score int
 		err   error
 	)
-	err = b.accessor.Update(func(b *qs.Board) error {
-		// Check if the position is already occupied
-		if _, exists := b.Tiles[[2]int{x, y}]; exists {
-			return ErrCellOccupied
+	err = b.accessor.Update(func(board *qs.Board) error {
+		// Test that the tile can be placed at the given position
+		horizontalLine, verticalLine, err := board.Test(tile, x, y)
+		if err != nil || !horizontalLine.IsValid() || !verticalLine.IsValid() {
+			return ErrIllegalMove
 		}
 
-		// Check that the tile can be placed in the given position
-		// lineVertical := b.GetLine(x, y, qs.DirectionVertical)
-		// lineHorizontal := b.GetLine(x, y, qs.DirectionHorizontal)
+		// Actually place the tile
+		board.Tiles[[2]int{x, y}] = tile
 
-		// TODO: Implement game logic for placing a tile
-
-		// Place the tile
-		b.Tiles[[2]int{x, y}] = tile
+		// Calculate the score
+		horizontalLineLength := horizontalLine.Length()
+		if horizontalLineLength == 6 { // Qwirkle!
+			score += 12
+		} else if horizontalLineLength > 1 {
+			score += horizontalLine.Length()
+		}
+		verticalLineLength := verticalLine.Length()
+		if verticalLineLength == 6 { // Qwirkle!
+			score += 12
+		} else if verticalLineLength > 1 {
+			score += verticalLine.Length()
+		}
 		return nil
 	})
 	if err != nil {

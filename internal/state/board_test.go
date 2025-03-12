@@ -73,6 +73,78 @@ func TestBoard_GetLine(t *testing.T) {
 	require.Equal(t, redClover2, tiles[2])
 }
 
+func TestBoard_Test(t *testing.T) {
+	redCircle := &Tile{Color: ColorRed, Shape: ShapeCircle}
+	redSquare := &Tile{Color: ColorRed, Shape: ShapeSquare}
+	redClover := &Tile{Color: ColorRed, Shape: ShapeClover}
+	blueClover := &Tile{Color: ColorBlue, Shape: ShapeClover}
+	purpleClover := &Tile{Color: ColorPurple, Shape: ShapeClover}
+	redDiamond := &Tile{Color: ColorRed, Shape: ShapeDiamond}
+	// blueDiamond := &Tile{Color: ColorBlue, Shape: ShapeDiamond}
+	// purpleDiamond := &Tile{Color: ColorPurple, Shape: ShapeDiamond}
+	redFourPointStar := &Tile{Color: ColorRed, Shape: ShapeFourPointStar}
+	redEightPointStar := &Tile{Color: ColorRed, Shape: ShapeEightPointStar}
+
+	board := NewBoard()
+	board.Tiles[[2]int{0, 0}] = redCircle
+	board.Tiles[[2]int{1, 0}] = redSquare
+	board.Tiles[[2]int{2, 0}] = redClover
+	// Gap at 2, 1
+	board.Tiles[[2]int{2, 2}] = blueClover
+	// Gap at 3, 0
+	// Gap at 3, 1
+	board.Tiles[[2]int{3, 2}] = purpleClover
+	board.Tiles[[2]int{4, 0}] = redFourPointStar
+	// Gap at 5, 0
+	board.Tiles[[2]int{5, 1}] = redEightPointStar
+	board.Tiles[[2]int{5, 2}] = redSquare
+
+	// Test placing a tile in an occupied position
+	_, _, err := board.Test(redCircle, 0, 0)
+	require.Equal(t, ErrCellOccupied, err)
+
+	// Test placing a tile in a valid position on row
+	horizontal, vertical, err := board.Test(redEightPointStar, 5, 0)
+	require.NoError(t, err)
+	require.True(t, horizontal.IsValid())
+	require.True(t, vertical.IsValid())
+
+	// Test that the operation didn't modify the board
+	require.Nil(t, board.Tiles[[2]int{5, 0}])
+
+	// Test placing a tile in a valid position in a row gap
+	horizontal, vertical, err = board.Test(redDiamond, 3, 0)
+	require.NoError(t, err)
+	require.True(t, horizontal.IsValid())
+	require.True(t, vertical.IsValid())
+
+	// Test placing a tile in a valid position on column
+	horizontal, vertical, err = board.Test(redDiamond, 0, 1)
+	require.NoError(t, err)
+	require.True(t, horizontal.IsValid())
+	require.True(t, vertical.IsValid())
+
+	// Test placing a tile in a valid position in a column gap
+	horizontal, vertical, err = board.Test(purpleClover, 2, 1)
+	require.NoError(t, err)
+	require.True(t, horizontal.IsValid())
+	require.True(t, vertical.IsValid())
+
+	// Test placing a tile in a valid position on a row and column gap
+	horizontal, vertical, err = board.Test(redDiamond, 5, 0)
+	require.NoError(t, err)
+	require.True(t, horizontal.IsValid())
+	require.True(t, vertical.IsValid())
+
+	// Test placing a tile in an invalid position in a row gap
+
+	// Test placing a tile in an invalid position in a column gap
+
+	// Test placing a tile in an invalid position on a row and column gap, where the row is valid but column is invalid
+
+	// Test placing a tile in an invalid position on a row and column gap, where the row is invalid but column is valid
+}
+
 func TestBoard_Key(t *testing.T) {
 	board := NewBoard()
 	require.Equal(t, "board", board.Key())
