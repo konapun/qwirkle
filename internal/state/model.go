@@ -33,7 +33,7 @@ func (d *Diff) GetChangeSet() map[string]Change {
 	return d.changed
 }
 
-type Model[T any] interface {
-	state.Model[T]
-	Diff(other T) Diff
+type Model interface {
+	state.Model
+	Diff(other Model) Diff
 }

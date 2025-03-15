@@ -3,6 +3,8 @@ package state
 import (
 	"errors"
 	"sort"
+
+	"github.com/konapun/statekit/state"
 )
 
 const (
@@ -181,9 +183,12 @@ func (b *Board) Test(tile *Tile, x, y int) (Line, Line, error) {
 		return nil, nil, ErrCellOccupied
 	}
 
+	b.Tiles[[2]int{x, y}] = tile
 	horizontal := b.GetLine(x, y, DirectionHorizontal)
 	vertical := b.GetLine(x, y, DirectionVertical)
-	return append(horizontal, &Cell{X: x, Y: y, Tile: tile}), append(vertical, &Cell{X: x, Y: y, Tile: tile}), nil
+	delete(b.Tiles, [2]int{x, y})
+
+	return horizontal, vertical, nil
 }
 
 func (b *Board) Key() string {
@@ -198,7 +203,7 @@ func (b *Board) Diff(other *Board) Diff {
 	return diff
 }
 
-func (b *Board) Clone() *Board {
+func (b *Board) Clone() state.Model {
 	newTiles := make(map[[2]int]*Tile)
 	for k, v := range b.Tiles {
 		newTiles[k] = v

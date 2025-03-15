@@ -21,7 +21,7 @@ func NewTileBagService(accessor *state.Accessor[*qs.TileBag]) *TileBagService {
 }
 
 // AddTiles adds the given tiles to the bag
-func (t *TileBagService) AddTiles(tiles []qs.Tile) error {
+func (t *TileBagService) AddTiles(tiles []*qs.Tile) error {
 	return t.accessor.Update(func(b *qs.TileBag) error {
 		b.Tiles = append(b.Tiles, tiles...)
 		return nil
@@ -30,7 +30,7 @@ func (t *TileBagService) AddTiles(tiles []qs.Tile) error {
 
 // DrawTile removes a tile from the bag and returns it
 func (t *TileBagService) DrawTile() (*qs.Tile, error) {
-	var tile qs.Tile
+	var tile *qs.Tile
 	if err := t.accessor.Update(func(b *qs.TileBag) error {
 		if len(b.Tiles) == 0 {
 			return ErrNoTiles
@@ -42,12 +42,12 @@ func (t *TileBagService) DrawTile() (*qs.Tile, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return &tile, nil
+	return tile, nil
 }
 
 // ExchangeTiles swaps the given tiles for new ones, adding the old ones back to the bag
-func (t *TileBagService) ExchangeTiles(tiles []qs.Tile) ([]qs.Tile, error) {
-	var newTiles []qs.Tile
+func (t *TileBagService) ExchangeTiles(tiles []*qs.Tile) ([]*qs.Tile, error) {
+	var newTiles []*qs.Tile
 	if err := t.accessor.Update(func(b *qs.TileBag) error {
 		// Draw new tiles from the bag
 		for range tiles {
@@ -67,4 +67,8 @@ func (t *TileBagService) ExchangeTiles(tiles []qs.Tile) ([]qs.Tile, error) {
 		return nil, err
 	}
 	return newTiles, nil
+}
+
+func (t *TileBagService) GetTiles() []*qs.Tile {
+	return t.accessor.Query().Tiles
 }

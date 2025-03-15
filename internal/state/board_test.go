@@ -56,6 +56,7 @@ func TestBoard_GetLine(t *testing.T) {
 	require.Equal(t, redCircle, tiles[0])
 	require.Equal(t, redSquare2, tiles[1])
 	require.Equal(t, redClover2, tiles[2])
+
 	tiles = board.GetLine(2, 0, DirectionHorizontal).GetTiles()
 	require.Len(t, tiles, 6)
 	require.Equal(t, redCircle, tiles[0])
@@ -96,7 +97,7 @@ func TestBoard_Test(t *testing.T) {
 	board.Tiles[[2]int{3, 2}] = purpleClover
 	board.Tiles[[2]int{4, 0}] = redFourPointStar
 	// Gap at 5, 0
-	board.Tiles[[2]int{5, 1}] = redEightPointStar
+	board.Tiles[[2]int{5, 1}] = redFourPointStar
 	board.Tiles[[2]int{5, 2}] = redSquare
 
 	// Test placing a tile in an occupied position
@@ -108,6 +109,8 @@ func TestBoard_Test(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, horizontal.IsValid())
 	require.True(t, vertical.IsValid())
+	require.Equal(t, 2, horizontal.Length()) // (4,0), (5,0)
+	require.Equal(t, 3, vertical.Length())   // (5,0), (5,1), (5,2)
 
 	// Test that the operation didn't modify the board
 	require.Nil(t, board.Tiles[[2]int{5, 0}])
@@ -165,7 +168,7 @@ func TestBoard_Clone(t *testing.T) {
 	board.Tiles[[2]int{0, 0}] = &Tile{Color: ColorRed, Shape: ShapeCircle}
 	board.Tiles[[2]int{1, 0}] = &Tile{Color: ColorBlue, Shape: ShapeCircle}
 	clone := board.Clone()
-	require.Equal(t, board.Tiles, clone.Tiles)
+	require.Equal(t, board.Tiles, clone.(*Board).Tiles)
 }
 
 func TestLine_Length(t *testing.T) {

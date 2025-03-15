@@ -3,7 +3,7 @@ module github.com/konapun/qwirkle
 go 1.24.0
 
 require (
-	github.com/konapun/statekit v0.1.0
+	github.com/konapun/statekit v0.2.0
 	github.com/stretchr/testify v1.10.0
 )
 

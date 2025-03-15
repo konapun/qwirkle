@@ -13,14 +13,14 @@ func TestTileBag_Key(t *testing.T) {
 }
 
 func TestTileBag_Diff(t *testing.T) {
-	tileBag := TileBag{Tiles: []Tile{{Color: ColorRed, Shape: ShapeCircle}}}
-	other := TileBag{Tiles: []Tile{{Color: ColorRed, Shape: ShapeCircle}, {Color: ColorBlue, Shape: ShapeSquare}}}
+	tileBag := TileBag{Tiles: []*Tile{{Color: ColorRed, Shape: ShapeCircle}}}
+	other := TileBag{Tiles: []*Tile{{Color: ColorRed, Shape: ShapeCircle}, {Color: ColorBlue, Shape: ShapeSquare}}}
 	diff := tileBag.Diff(&other)
 	require.True(t, diff.HasChanged("Tiles"))
 }
 
 func TestTileBag_Clone(t *testing.T) {
-	tileBag := TileBag{Tiles: []Tile{{Color: ColorRed, Shape: ShapeCircle}}}
+	tileBag := TileBag{Tiles: []*Tile{{Color: ColorRed, Shape: ShapeCircle}}}
 	clone := tileBag.Clone()
-	require.Equal(t, tileBag.Tiles, clone.Tiles)
+	require.Equal(t, tileBag.Tiles, clone.(*TileBag).Tiles)
 }

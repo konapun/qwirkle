@@ -15,13 +15,13 @@ func TestTileBagService_AddTiles(t *testing.T) {
 	tileBagService := NewTileBagService(accessor)
 
 	// Test adding a single tile
-	err := tileBagService.AddTiles([]qs.Tile{{Color: qs.ColorRed, Shape: qs.ShapeCircle}})
+	err := tileBagService.AddTiles([]*qs.Tile{{Color: qs.ColorRed, Shape: qs.ShapeCircle}})
 	require.Nil(t, err)
 	require.Len(t, tileBag.Tiles, 1)
 }
 
 func TestTileBagService_DrawTile(t *testing.T) {
-	tileBag := qs.TileBag{Tiles: []qs.Tile{{Color: qs.ColorRed, Shape: qs.ShapeCircle}}}
+	tileBag := qs.TileBag{Tiles: []*qs.Tile{{Color: qs.ColorRed, Shape: qs.ShapeCircle}}}
 	accessor := state.NewAccessor(&tileBag)
 	tileBagService := NewTileBagService(accessor)
 
@@ -37,15 +37,15 @@ func TestTileBagService_DrawTile(t *testing.T) {
 }
 
 func TestTileBagService_ExchangeTiles(t *testing.T) {
-	redCircleTile := qs.Tile{Color: qs.ColorRed, Shape: qs.ShapeCircle}
-	greenSquareTile := qs.Tile{Color: qs.ColorGreen, Shape: qs.ShapeSquare}
-	orangeDiamondTile := qs.Tile{Color: qs.ColorOrange, Shape: qs.ShapeDiamond}
-	tileBag := qs.TileBag{Tiles: []qs.Tile{redCircleTile}}
+	redCircleTile := &qs.Tile{Color: qs.ColorRed, Shape: qs.ShapeCircle}
+	greenSquareTile := &qs.Tile{Color: qs.ColorGreen, Shape: qs.ShapeSquare}
+	orangeDiamondTile := &qs.Tile{Color: qs.ColorOrange, Shape: qs.ShapeDiamond}
+	tileBag := qs.TileBag{Tiles: []*qs.Tile{redCircleTile}}
 	accessor := state.NewAccessor(&tileBag)
 	tileBagService := NewTileBagService(accessor)
 
 	// Test exchanging a single tile
-	newTiles, err := tileBagService.ExchangeTiles([]qs.Tile{greenSquareTile})
+	newTiles, err := tileBagService.ExchangeTiles([]*qs.Tile{greenSquareTile})
 	require.Nil(t, err)
 	require.Len(t, tileBag.Tiles, 1)
 	require.Len(t, newTiles, 1)
@@ -53,6 +53,6 @@ func TestTileBagService_ExchangeTiles(t *testing.T) {
 	require.Equal(t, redCircleTile, newTiles[0])
 
 	// Test trying to exchange more tiles than are in the bag
-	_, err = tileBagService.ExchangeTiles([]qs.Tile{redCircleTile, orangeDiamondTile})
+	_, err = tileBagService.ExchangeTiles([]*qs.Tile{redCircleTile, orangeDiamondTile})
 	require.Equal(t, ErrNotEnoughTiles, err)
 }
