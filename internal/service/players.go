@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"slices"
+	"sort"
 
 	qs "github.com/konapun/qwirkle/internal/state"
 	"github.com/konapun/statekit/state"
@@ -63,20 +64,43 @@ func (p *PlayersService) HasTile(tile *qs.Tile) (bool, error) {
 	return false, nil
 }
 
-func (p *PlayersService) PlayTile(tile *qs.Tile) error {
+// PlayTiles runs a play function, returning the tiles from the player's hand if they exist and then removing them from the hand if the function being run returns successfully, otherwise the tiles are not removed
+func (p *PlayersService) PlayTiles(tiles []*qs.Tile, play func() error) error {
 	return p.accessor.Update(func(p *qs.Players) error {
 		activePlayer, err := p.GetActivePlayer()
 		if err != nil {
 			return ErrPlayerNotFound
 		}
 
-		for i, t := range activePlayer.Hand {
-			if t == tile {
-				activePlayer.Hand = slices.Delete(activePlayer.Hand, i, i+1)
-				return nil
+		// Make sure the player has all the tiles in the run
+		handIndices := make([]int, 0, len(tiles)) // Use 0 capacity to avoid extra zeroes
+		for _, tile := range tiles {
+			hasTile := false
+			for i, handTile := range activePlayer.Hand {
+				if tile.Equals(handTile) {
+					handIndices = append(handIndices, i)
+					hasTile = true
+					break
+				}
+			}
+			if !hasTile {
+				return ErrTileNotFound
 			}
 		}
-		return ErrTileNotFound
+
+		// Run the function
+		if err := play(); err != nil {
+			return err
+		}
+
+		// Sort indices in descending order
+		sort.Sort(sort.Reverse(sort.IntSlice(handIndices)))
+
+		// Remove the tiles from the player's hand
+		for _, i := range handIndices {
+			activePlayer.Hand = slices.Delete(activePlayer.Hand, i, i+1)
+		}
+		return nil
 	})
 }
 

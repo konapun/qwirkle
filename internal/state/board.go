@@ -2,6 +2,7 @@ package state
 
 import (
 	"errors"
+	"maps"
 	"sort"
 
 	"github.com/konapun/statekit/state"
@@ -12,8 +13,15 @@ const (
 )
 
 const (
-	DirectionVertical Direction = iota
-	DirectionHorizontal
+	DirectionLeftToRight Direction = iota
+	DirectionRightToLeft
+	DirectionDownToUp
+	DirectionUpToDown
+)
+
+const (
+	OrientationHorizontal Orientation = iota
+	OrientationVertical
 )
 
 const (
@@ -31,7 +39,29 @@ var (
 
 type Direction int
 
+func (d Direction) Orientation() Orientation {
+	switch d {
+	case DirectionLeftToRight, DirectionRightToLeft:
+		return OrientationHorizontal
+	case DirectionDownToUp, DirectionUpToDown:
+		return OrientationVertical
+	}
+	return OrientationHorizontal
+}
+
+type Orientation int
+
 type Type int
+
+// Run is a set of tiles to be placed on the board
+type Run struct {
+	// Direction of the line
+	Direction Direction
+	// Lower leftmost starting coords, moving right or up
+	X, Y int
+	// Tiles to be placed
+	Tiles []*Tile
+}
 
 type Line []*Cell
 
@@ -143,7 +173,7 @@ func NewBoard() *Board {
 }
 
 // GetLine returns a line of tiles starting at the given position in the given direction until it encounters an empty space
-func (b *Board) GetLine(x, y int, direction Direction) Line {
+func (b *Board) GetLine(x, y int, orientation Orientation) Line {
 	cells := make([]*Cell, 0)
 	line := Line(cells)
 	collectCells := func(x, y int, dx, dy int) {
@@ -159,18 +189,18 @@ func (b *Board) GetLine(x, y int, direction Direction) Line {
 	}
 
 	// Collect cells in the positive direction
-	switch direction {
-	case DirectionVertical:
+	switch orientation {
+	case OrientationVertical:
 		collectCells(x, y, 0, 1)
-	case DirectionHorizontal:
+	case OrientationHorizontal:
 		collectCells(x, y, 1, 0)
 	}
 
 	// Collect cells in the negative direction (excluding the starting cell)
-	switch direction {
-	case DirectionVertical:
+	switch orientation {
+	case OrientationVertical:
 		collectCells(x, y-1, 0, -1)
-	case DirectionHorizontal:
+	case OrientationHorizontal:
 		collectCells(x-1, y, -1, 0)
 	}
 
@@ -184,8 +214,8 @@ func (b *Board) Test(tile *Tile, x, y int) (Line, Line, error) {
 	}
 
 	b.Tiles[[2]int{x, y}] = tile
-	horizontal := b.GetLine(x, y, DirectionHorizontal)
-	vertical := b.GetLine(x, y, DirectionVertical)
+	horizontal := b.GetLine(x, y, OrientationHorizontal)
+	vertical := b.GetLine(x, y, OrientationVertical)
 	delete(b.Tiles, [2]int{x, y})
 
 	return horizontal, vertical, nil
@@ -205,9 +235,7 @@ func (b *Board) Diff(other *Board) Diff {
 
 func (b *Board) Clone() state.Model {
 	newTiles := make(map[[2]int]*Tile)
-	for k, v := range b.Tiles {
-		newTiles[k] = v
-	}
+	maps.Copy(newTiles, b.Tiles)
 	return &Board{
 		Tiles: newTiles,
 	}

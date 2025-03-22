@@ -28,7 +28,7 @@ func TestBoard_GetLine(t *testing.T) {
 	board.Tiles[[2]int{0, 2}] = redClover2
 
 	// Test getting a horizontal line
-	line := board.GetLine(0, 0, DirectionHorizontal)
+	line := board.GetLine(0, 0, OrientationHorizontal)
 	require.Equal(t, 6, line.Length())
 	tiles := line.GetTiles()
 	require.Equal(t, 6, len(tiles))
@@ -40,7 +40,7 @@ func TestBoard_GetLine(t *testing.T) {
 	require.Equal(t, redEightPointStar, tiles[5])
 
 	// Test getting a vertical line
-	line = board.GetLine(0, 0, DirectionVertical)
+	line = board.GetLine(0, 0, OrientationVertical)
 	require.Equal(t, 3, line.Length())
 	tiles = line.GetTiles()
 	require.Equal(t, 3, len(tiles))
@@ -49,7 +49,7 @@ func TestBoard_GetLine(t *testing.T) {
 	require.Equal(t, redClover2, tiles[2])
 
 	// Test getting a horizontal line starting from the middle, ensuring the entire line is returned
-	line = board.GetLine(0, 0, DirectionVertical)
+	line = board.GetLine(0, 0, OrientationVertical)
 	require.Equal(t, 3, line.Length())
 	tiles = line.GetTiles()
 	require.Equal(t, 3, len(tiles))
@@ -57,7 +57,7 @@ func TestBoard_GetLine(t *testing.T) {
 	require.Equal(t, redSquare2, tiles[1])
 	require.Equal(t, redClover2, tiles[2])
 
-	tiles = board.GetLine(2, 0, DirectionHorizontal).GetTiles()
+	tiles = board.GetLine(2, 0, OrientationHorizontal).GetTiles()
 	require.Len(t, tiles, 6)
 	require.Equal(t, redCircle, tiles[0])
 	require.Equal(t, redSquare, tiles[1])
@@ -67,7 +67,7 @@ func TestBoard_GetLine(t *testing.T) {
 	require.Equal(t, redEightPointStar, tiles[5])
 
 	// Test getting a vertical line starting from the middle, ensuring the entire line is returned
-	tiles = board.GetLine(0, 1, DirectionVertical).GetTiles()
+	tiles = board.GetLine(0, 1, OrientationVertical).GetTiles()
 	require.Len(t, tiles, 3)
 	require.Equal(t, redCircle, tiles[0])
 	require.Equal(t, redSquare2, tiles[1])

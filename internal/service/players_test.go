@@ -19,24 +19,32 @@ func getPlayersService(players qs.Players, observers ...state.Observer[*qs.Playe
 	return service
 }
 
-func TestPlayerService_PlayTile(t *testing.T) {
+func TestPlayerService_PlayTiles(t *testing.T) {
+	successFn := func() error { return nil }
 	redCircle := qs.Tile{Color: qs.ColorRed, Shape: qs.ShapeCircle}
+	blueSquare := qs.Tile{Color: qs.ColorBlue, Shape: qs.ShapeSquare}
+	orangeClover := qs.Tile{Color: qs.ColorOrange, Shape: qs.ShapeClover}
 	player := qs.Player{
 		Hand: []*qs.Tile{&redCircle},
 	}
 	playersService := getPlayersService(qs.Players{Players: []*qs.Player{&player}})
 
 	// Test playing a tile that doesn't exist in the player's hand
-	err := playersService.PlayTile(&qs.Tile{Color: qs.ColorBlue, Shape: qs.ShapeSquare})
+	err := playersService.PlayTiles([]*qs.Tile{&blueSquare}, successFn)
 	require.Equal(t, ErrTileNotFound, err)
 
 	// Test playing a tile that exists in the player's hand
-	err = playersService.PlayTile(&redCircle)
+	err = playersService.PlayTiles([]*qs.Tile{&redCircle}, successFn)
 	require.Nil(t, err)
 
 	// Test that the tile was removed from the player's hand
-	err = playersService.PlayTile(&qs.Tile{Color: qs.ColorRed, Shape: qs.ShapeCircle})
+	err = playersService.PlayTiles([]*qs.Tile{&redCircle}, successFn)
 	require.Equal(t, ErrTileNotFound, err)
+
+	player.Hand = []*qs.Tile{&redCircle, &blueSquare, &orangeClover}
+  err = playersService.PlayTiles([]*qs.Tile{&redCircle, &blueSquare}, successFn)
+  require.Nil(t, err)
+  require.Len(t, player.Hand, 1)
 }
 
 func TestPlayerService_NextPlayer(t *testing.T) {
@@ -121,7 +129,7 @@ func TestPlayerService_GetPlayerHand(t *testing.T) {
 
 	playersService := getPlayersService(qs.Players{Players: []*qs.Player{&player}})
 	hand, err := playersService.GetPlayerHand()
-  require.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, hand, 3)
 	require.Equal(t, &redCircle, hand[0])
 	require.Equal(t, &blueSquare, hand[1])

@@ -3,6 +3,7 @@ package scene
 import (
 	"github.com/konapun/qwirkle/internal"
 	"github.com/konapun/qwirkle/internal/service"
+	"github.com/konapun/qwirkle/internal/state"
 )
 
 const (
@@ -44,6 +45,10 @@ func (s *StartGame) Run(controller *Controller) error {
 		if numPlayers == 0 {
 			return ErrNoPlayers
 		}
+
+		// Fill the tile bag
+		gameService.FillTileBag(state.AllTiles)
+
 		// Deal tiles to players
 		for range numPlayers {
 			for range service.MaxHandSize {

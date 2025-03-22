@@ -23,7 +23,7 @@ func TestPlayerTurn_Run(t *testing.T) {
 	controller := NewController(playerTurn, gameOver)
 
 	// Start player turn
-	input.Value = PlaceTile
+	input.Value = PlayerAction{Type: PlaceTiles, Arguments: PlaceTilesArguments{TileRun: &state.Run{}}}
 	controller.Transition(playerTurn.Key())
 	require.False(t, gameOverCalled)
 }

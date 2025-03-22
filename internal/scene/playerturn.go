@@ -3,6 +3,7 @@ package scene
 import (
 	"github.com/konapun/qwirkle/internal"
 	"github.com/konapun/qwirkle/internal/service"
+	"github.com/konapun/qwirkle/internal/state"
 )
 
 const (
@@ -10,11 +11,20 @@ const (
 )
 
 const (
-	PlaceTile PlayerAction = iota
+	PlaceTiles PlayerActionType = iota
 	SwapTiles
 )
 
-type PlayerAction int
+type PlayerActionType int
+
+type PlayerAction struct {
+	Type      PlayerActionType
+	Arguments any
+}
+
+type PlaceTilesArguments struct {
+	TileRun *state.Run
+}
 
 type PlayerTurn struct {
 	gameService *service.GameService
@@ -34,8 +44,10 @@ func (p *PlayerTurn) Key() string {
 
 func (p *PlayerTurn) Run(controller *Controller) error {
 	action := p.input.Read()
-	switch action {
-	case PlaceTile:
+	switch action.Type {
+	case PlaceTiles:
+		arguments := action.Arguments.(PlaceTilesArguments)
+		p.gameService.PlaceTiles(arguments.TileRun)
 		// place tile
 	case SwapTiles:
 		// swap tiles

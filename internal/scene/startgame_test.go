@@ -45,7 +45,6 @@ func TestStartGame_Run(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, playerTurnCalled)
 	require.Equal(t, 2, gameService.GetNumberOfPlayers())
-  // FIXME:
-	// require.Equal(t, 6, len(stateManager.PlayersAccessor.Query().Players[0].Hand))
-	// require.Equal(t, 6, len(stateManager.PlayersAccessor.Query().Players[1].Hand))
+	require.Equal(t, 6, len(stateManager.PlayersAccessor.Query().Players[0].Hand))
+	require.Equal(t, 6, len(stateManager.PlayersAccessor.Query().Players[1].Hand))
 }

@@ -34,19 +34,17 @@ func (g *GameService) FillTileBag(tiles []*qs.Tile) error {
 	return g.tileBagService.AddTiles(tiles)
 }
 
-// Place tile takes a tile from the active player's hand and places it on the board
-func (g *GameService) PlaceTile(tile *qs.Tile, x, y int) error {
-	// Remove the tile from the player's hand
-	if err := g.playersService.PlayTile(tile); err != nil {
-		return err
-	}
-
-	score, err := g.boardService.PlaceTile(tile, x, y)
-	if err != nil {
-		return err
-	}
-	g.playersService.IncrementScore(score)
-	return nil
+// Place tile takes a tile run from the active player's hand and places it on the board
+func (g *GameService) PlaceTiles(tileRun *qs.Run) error {
+	// Ensure the player has the tiles in the run and remove them from the player's hand
+	return g.playersService.PlayTiles(tileRun.Tiles, func() error {
+		score, err := g.boardService.PlaceTiles(tileRun)
+		if err != nil {
+			return err
+		}
+		g.playersService.IncrementScore(score)
+		return nil
+	})
 }
 
 // DrawTile takes a tile from the tile bag and adds it to the active player's hand
