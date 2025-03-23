@@ -141,6 +141,7 @@ func (p *PlayersService) GetPlayerHand() ([]*qs.Tile, error) {
 	players := p.accessor.Query()
 	activePlayer, err := players.GetActivePlayer()
 	if err != nil {
+    println("No active player")
 		return nil, ErrPlayerNotFound
 	}
 	return activePlayer.Hand, nil

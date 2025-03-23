@@ -6,9 +6,7 @@ import (
 	"github.com/konapun/qwirkle/internal/state"
 )
 
-const (
-	ScenePlayerTurn = "playerTurn"
-)
+const ScenePlayerTurn = "playerTurn"
 
 const (
 	PlaceTiles PlayerActionType = iota

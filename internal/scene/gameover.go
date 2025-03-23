@@ -4,16 +4,14 @@ import (
 	"github.com/konapun/qwirkle/internal"
 )
 
-const (
-	SceneGameOver = "gameOver"
-)
-
-type GameOverAction int
+const SceneGameOver = "gameOver"
 
 const (
 	NewGame GameOverAction = iota
 	Quit
 )
+
+type GameOverAction int
 
 type GameOver struct {
 	input internal.Input[GameOverAction]
@@ -33,9 +31,9 @@ func (g *GameOver) Run(controller *Controller) error {
 	action := g.input.Read()
 	switch action {
 	case NewGame:
-		// start new game
+		controller.Transition(SceneStartGame)
 	case Quit:
-		// end game
+		return nil
 	default:
 		return ErrInvalidAction
 	}

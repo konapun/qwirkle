@@ -6,16 +6,14 @@ import (
 	"github.com/konapun/qwirkle/internal/state"
 )
 
-const (
-	SceneStartGame = "startGame"
-)
-
-type StartGameAction int
+const SceneStartGame = "startGame"
 
 const (
 	AddPlayer StartGameAction = iota
 	Start
 )
+
+type StartGameAction int
 
 type StartGame struct {
 	gameService *service.GameService

@@ -90,5 +90,5 @@ func (g *GameService) IsOver() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return len(remainingBaggedTiles)+len(remainingPlayerTiles) > 0, nil
+	return len(remainingBaggedTiles)+len(remainingPlayerTiles) == 0, nil
 }

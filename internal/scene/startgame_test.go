@@ -47,4 +47,9 @@ func TestStartGame_Run(t *testing.T) {
 	require.Equal(t, 2, gameService.GetNumberOfPlayers())
 	require.Equal(t, 6, len(stateManager.PlayersAccessor.Query().Players[0].Hand))
 	require.Equal(t, 6, len(stateManager.PlayersAccessor.Query().Players[1].Hand))
+
+  // Test unknown action
+  input.Value = 2
+  err = controller.Transition(startGame.Key())
+  require.Error(t, err)
 }
