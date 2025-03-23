@@ -47,6 +47,26 @@ func (g *GameService) PlaceTiles(tileRun *qs.Run) error {
 	})
 }
 
+func (g *GameService) SwapTiles(tiles []*qs.Tile) error {
+	return g.playersService.PlayTiles(tiles, func() error {
+		// Add the tiles back to the bag
+		if err := g.tileBagService.AddTiles(tiles); err != nil {
+			return err
+		}
+		// Draw new tiles to replace the ones swapped
+		for range tiles {
+			tile, err := g.tileBagService.DrawTile()
+			if err != nil {
+				return err
+			}
+			if err = g.playersService.DrawTile(tile); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
 // DrawTile takes a tile from the tile bag and adds it to the active player's hand
 func (g *GameService) DrawTile() error {
 	tile, err := g.tileBagService.DrawTile()
@@ -64,7 +84,7 @@ func (g *GameService) NextPlayer() error {
 	return g.playersService.NextPlayer()
 }
 
-func (g *GameService) IsRunning() (bool, error) {
+func (g *GameService) IsOver() (bool, error) {
 	remainingBaggedTiles := g.tileBagService.GetTiles()
 	remainingPlayerTiles, err := g.playersService.GetPlayerHand()
 	if err != nil {

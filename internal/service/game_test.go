@@ -50,7 +50,6 @@ func TestGameService_PlaceTile(t *testing.T) {
 		Tiles:     []*qs.Tile{redCircle},
 	})
 	require.NoError(t, err)
-	// activePlayer, _ := stateManager.PlayersAccessor.Query().GetActivePlayer()
-	// FIXME:
-	// require.Equal(t, 1, activePlayer.Score)
+	activePlayer, _ := stateManager.PlayersAccessor.Query().GetActivePlayer()
+	require.Equal(t, 1, activePlayer.Score)
 }

@@ -81,6 +81,9 @@ func (b *BoardService) PlaceTiles(run *qs.Run) (int, error) {
 				}
 			}
 		}
+		if score == 0 {
+			score = 1 // At least one point for placing a tile (should only happen at the start of the game)
+		}
 
 		return nil
 	})
