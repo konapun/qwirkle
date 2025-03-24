@@ -40,21 +40,21 @@ type EventObserver struct {
 
 func NewEventObserver(manager *qs.Manager) *EventObserver {
 	observer := &aggregateObserver{}
-	manager.PlayersAccessor.RegisterObserver(state.NewRuntimeObserver(func(old, new *qs.Players) {
+	manager.PlayersAccessor.RegisterObserver(state.NewRuntimeObserver(func(new, old *qs.Players) {
 		observer.Notify(&Event{
 			Type: EventTypePlayersUpdated,
 			Old:  old,
 			New:  new,
 		})
 	}))
-	manager.BoardAccessor.RegisterObserver(state.NewRuntimeObserver(func(old, new *qs.Board) {
+	manager.BoardAccessor.RegisterObserver(state.NewRuntimeObserver(func(new, old *qs.Board) {
 		observer.Notify(&Event{
 			Type: EventTypeBoardUpdated,
 			Old:  old,
 			New:  new,
 		})
 	}))
-	manager.TileBagAccessor.RegisterObserver(state.NewRuntimeObserver(func(old, new *qs.TileBag) {
+	manager.TileBagAccessor.RegisterObserver(state.NewRuntimeObserver(func(new, old *qs.TileBag) {
 		observer.Notify(&Event{
 			Type: EventTypeTileBagUpdated,
 			Old:  old,

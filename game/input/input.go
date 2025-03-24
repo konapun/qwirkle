@@ -48,6 +48,12 @@ type PlayerTurnReader struct {
 }
 
 func (g *PlayerTurnReader) Read() scene.PlayerAction {
+  reader := g.reader
+  input, _ := reader.Read()
+  if strings.HasPrefix(input, "place") {
+    return scene.PlayerAction{Type: scene.PlaceTiles, Arguments: scene.PlaceTilesArguments{TileRun: nil}}
+  }
+
 	return scene.PlayerAction{Type: scene.PlaceTiles}
 }
 
