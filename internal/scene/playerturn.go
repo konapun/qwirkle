@@ -58,7 +58,10 @@ func (p *PlayerTurn) Run(controller *Controller) error {
 	action := p.input.Read()
 	switch action.Type {
 	case PlaceTiles:
-		arguments := action.Arguments.(PlaceTilesArguments)
+		arguments, ok := action.Arguments.(PlaceTilesArguments)
+    if !ok {
+      return ErrInvalidAction
+    }
 		if err := p.gameService.PlaceTiles(arguments.TileRun); err != nil {
 			return err
 		}

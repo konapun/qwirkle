@@ -1,9 +1,29 @@
 package scene
 
-// TODO: Figure out where the player controller fits in:
-// - Should the controller take a manager?
-// - Should the manager take a controller?
+import (
+	"github.com/konapun/qwirkle/internal"
+	"github.com/konapun/qwirkle/internal/service"
+)
+
 type Manager struct {
+	controller *Controller
 }
 
-// TODO: the manager should instantiate the scenes
+type InputReaders struct {
+	StartGameReader  internal.Input[StartGameAction]
+	PlayerTurnReader internal.Input[PlayerAction]
+	GameOverReader   internal.Input[GameOverAction]
+}
+
+func NewManager(gameService *service.GameService, readers InputReaders) *Manager {
+	controller := NewController(
+		NewStartGame(gameService, readers.StartGameReader),
+		NewPlayerTurn(gameService, readers.PlayerTurnReader),
+		NewGameOver(readers.GameOverReader),
+	)
+	return &Manager{controller}
+}
+
+func (m *Manager) Start() error {
+	return m.controller.Transition(SceneStartGame)
+}

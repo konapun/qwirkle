@@ -1,5 +1,9 @@
 package scene
 
+const (
+	SceneActionUnknown = -1
+)
+
 type Scene interface {
 	Key() string
 	Run(*Controller) error

@@ -2,10 +2,11 @@ package tui
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 )
 
-// Input is a text-based user interface input device.
+// Input translates text-based user input into actions.
 type Input struct {
 	reader *bufio.Reader
 }
@@ -15,7 +16,7 @@ func NewInput() *Input {
 	return &Input{reader}
 }
 
-// Read reads input from the user.
 func (i *Input) Read() (string, error) {
-	return i.reader.ReadString('\n') // Read until newline
+	fmt.Print("> ")
+	return i.reader.ReadString('\n')
 }

@@ -1,29 +1,32 @@
 package game
 
 import (
-	"github.com/konapun/qwirkle/internal"
+	gameInput "github.com/konapun/qwirkle/game/input"
 	"github.com/konapun/qwirkle/internal/scene"
 	"github.com/konapun/qwirkle/internal/service"
 	"github.com/konapun/qwirkle/internal/state"
 )
 
 type Game struct {
-  controller *scene.Controller
+	sceneManager *scene.Manager
 }
 
-func New(input internal.Input[any]) *Game {
+func New(reader gameInput.StringReader, observer Observer) *Game {
 	stateManager := state.NewManager(state.NewState())
+	eventObserver := NewEventObserver(stateManager)
+	eventObserver.Register(observer)
+
 	gameService := service.NewGameService(stateManager)
+	input := gameInput.NewInput(reader)
+	sceneManager := scene.NewManager(gameService, scene.InputReaders{
+		StartGameReader:  &input.StartGameReader,
+		PlayerTurnReader: &input.PlayerTurnReader,
+		GameOverReader:   &input.GameOverReader,
+	})
 
-  controller := scene.NewController(
-    scene.NewStartGame(gameService, input.layer[LayerStartGame]),
-    scene.NewPlayerTurn(gameService, input.layer[LayerPlayerTurn]),
-    scene.NewGameOver(input.layer[LayerGameOver]),
-  )
-
-  return &Game{controller}
+	return &Game{sceneManager}
 }
 
-func (c *Game) Run() error {
-  return c.controller.Transition(scene.SceneStartGame)
+func (g *Game) Run() error {
+	return g.sceneManager.Start()
 }

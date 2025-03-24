@@ -38,6 +38,8 @@ func (s *StartGame) Run(controller *Controller) error {
 	switch action {
 	case AddPlayer:
 		gameService.AddPlayer()
+    // Transition back to the start to add more players
+    controller.Transition(SceneStartGame)
 	case Start:
 		numPlayers := gameService.GetNumberOfPlayers()
 		if numPlayers == 0 {
