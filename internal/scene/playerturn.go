@@ -1,7 +1,7 @@
 package scene
 
 import (
-	"github.com/konapun/qwirkle/internal"
+	"github.com/konapun/qwirkle/internal/io"
 	"github.com/konapun/qwirkle/internal/service"
 	"github.com/konapun/qwirkle/internal/state"
 )
@@ -30,10 +30,10 @@ type SwapTilesArguments struct {
 
 type PlayerTurn struct {
 	gameService *service.GameService
-	input       internal.Input[PlayerAction]
+	input       io.Input[PlayerAction]
 }
 
-func NewPlayerTurn(gameService *service.GameService, input internal.Input[PlayerAction]) *PlayerTurn {
+func NewPlayerTurn(gameService *service.GameService, input io.Input[PlayerAction]) *PlayerTurn {
 	return &PlayerTurn{
 		gameService: gameService,
 		input:       input,
@@ -59,9 +59,9 @@ func (p *PlayerTurn) Run(controller *Controller) error {
 	switch action.Type {
 	case PlaceTiles:
 		arguments, ok := action.Arguments.(PlaceTilesArguments)
-    if !ok {
-      return ErrInvalidAction
-    }
+		if !ok {
+			return ErrInvalidAction
+		}
 		if err := p.gameService.PlaceTiles(arguments.TileRun); err != nil {
 			return err
 		}

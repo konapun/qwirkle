@@ -1,7 +1,7 @@
 package scene
 
 import (
-	"github.com/konapun/qwirkle/internal"
+	"github.com/konapun/qwirkle/internal/io"
 	"github.com/konapun/qwirkle/internal/service"
 )
 
@@ -10,9 +10,9 @@ type Manager struct {
 }
 
 type InputReaders struct {
-	StartGameReader  internal.Input[StartGameAction]
-	PlayerTurnReader internal.Input[PlayerAction]
-	GameOverReader   internal.Input[GameOverAction]
+	StartGameReader  io.Input[StartGameAction]
+	PlayerTurnReader io.Input[PlayerAction]
+	GameOverReader   io.Input[GameOverAction]
 }
 
 func NewManager(gameService *service.GameService, readers InputReaders) *Manager {

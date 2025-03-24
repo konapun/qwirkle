@@ -1,7 +1,7 @@
 package scene
 
 import (
-	"github.com/konapun/qwirkle/internal"
+	"github.com/konapun/qwirkle/internal/io"
 )
 
 const SceneGameOver = "gameOver"
@@ -14,10 +14,10 @@ const (
 type GameOverAction int
 
 type GameOver struct {
-	input internal.Input[GameOverAction]
+	input io.Input[GameOverAction]
 }
 
-func NewGameOver(input internal.Input[GameOverAction]) *GameOver {
+func NewGameOver(input io.Input[GameOverAction]) *GameOver {
 	return &GameOver{
 		input: input,
 	}

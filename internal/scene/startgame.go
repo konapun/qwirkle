@@ -1,7 +1,7 @@
 package scene
 
 import (
-	"github.com/konapun/qwirkle/internal"
+	"github.com/konapun/qwirkle/internal/io"
 	"github.com/konapun/qwirkle/internal/service"
 	"github.com/konapun/qwirkle/internal/state"
 )
@@ -17,10 +17,10 @@ type StartGameAction int
 
 type StartGame struct {
 	gameService *service.GameService
-	input       internal.Input[StartGameAction]
+	input       io.Input[StartGameAction]
 }
 
-func NewStartGame(gameService *service.GameService, input internal.Input[StartGameAction]) *StartGame {
+func NewStartGame(gameService *service.GameService, input io.Input[StartGameAction]) *StartGame {
 	return &StartGame{
 		gameService: gameService,
 		input:       input,
@@ -38,8 +38,8 @@ func (s *StartGame) Run(controller *Controller) error {
 	switch action {
 	case AddPlayer:
 		gameService.AddPlayer()
-    // Transition back to the start to add more players
-    controller.Transition(SceneStartGame)
+		// Transition back to the start to add more players
+		controller.Transition(SceneStartGame)
 	case Start:
 		numPlayers := gameService.GetNumberOfPlayers()
 		if numPlayers == 0 {
